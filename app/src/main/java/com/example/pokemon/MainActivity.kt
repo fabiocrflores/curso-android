@@ -6,12 +6,14 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.pokemon.mvp.MainInterface
 import com.example.pokemon.mvp.MainPresenter
+import com.example.pokemon.mvvm.MainViewModel
 
 class MainActivity : AppCompatActivity(), MainInterface.View {
 
     private lateinit var textTexto: TextView
 
-    private lateinit var mainPresenter: MainPresenter
+//    private lateinit var mainPresenter: MainPresenter
+    private lateinit var mainViewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,25 +21,26 @@ class MainActivity : AppCompatActivity(), MainInterface.View {
 
         textTexto = findViewById(R.id.tv_text)
 
-        mainPresenter = MainPresenter(this)
+//        mainPresenter = MainPresenter(this)
+        mainViewModel = MainViewModel()
 
-//        mustShowError()
-        mainPresenter.sumNumbers(2, 2)
-    }
+//        mainPresenter.sumNumbers(2, 2)
 
-    override fun showMessage() {
-        Toast.makeText(this, "Erro exibido", Toast.LENGTH_LONG).show()
+        setupObserver()
+        mainViewModel.sumNumbers(2,2)
+
+        Thread.sleep(10000)
+
+        mainViewModel.sumNumbers(5,5)
     }
 
     override fun showResultSum(result: Int) {
         textTexto.text = "Resultado da soma $result"
     }
 
-    override fun loadCharacters(characters: List<String>) {
-        Toast.makeText(this, characters.toString(), Toast.LENGTH_LONG).show()
-    }
-
-    private fun mustShowError() {
-        mainPresenter.checkHasError(2)
+    private fun setupObserver() {
+        mainViewModel.sumResult.observe(this) { result ->
+            textTexto.text = "Resultado da soma $result"
+        }
     }
 }
